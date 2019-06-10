@@ -59,7 +59,7 @@
 // 	return nil;
 // }
 
-%end
+// %end
 
 // 去掉答案后边的广告
 %hook ZHAppDelegate
