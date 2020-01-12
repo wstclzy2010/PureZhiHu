@@ -1,17 +1,17 @@
 #import "PZHURLProtocol.h"
 
 // 去掉『市场』tab
-%hook  ZHInitialTabBarController
+// %hook  ZHInitialTabBarController
 
-- (NSArray *)tabs
-{
-	NSArray *ret = %orig;
-	NSMutableArray *mutRet = [NSMutableArray array];
-	[mutRet removeObjectAtIndex:2];
-	return mutRet.copy;
-}
+// - (NSArray *)tabs
+// {
+// 	NSArray *ret = %orig;
+// 	NSMutableArray *mutRet = [NSMutableArray array];
+// 	[mutRet removeObjectAtIndex:2];
+// 	return mutRet.copy;
+// }
 
-%end
+// %end
 
 
 // 去掉开屏广告
@@ -41,7 +41,6 @@
 %end
 
 // 去掉 FEED 流广告
-
 %hook ZHFeedADWrap
 
 - (id)initWithProperties:(id)arg1
@@ -51,34 +50,35 @@
 
 %end
 
-// // 去掉FEED流里的 LIVE 推荐
-// %hook ZHKMFeed
+// 去掉盐选专栏
+%hook ZHFeedLiveCourse
 
-// - (id)init
-// {
-// 	return nil;
-// }
+- (void)setTitle:(id)title
+{
+	NSLog(@"PureZhihu: title: %@", title);
+	%orig;
+}
 
-// %end
+%end
 
 // 去掉答案后边的广告
 %hook ZHAppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	[NSURLProtocol registerClass:NSClassFromString(@"PZHURLProtocol")];
-	//注册scheme
-    Class cls = NSClassFromString(@"WKBrowsingContextController");
-    SEL sel = NSSelectorFromString(@"registerSchemeForCustomProtocol:");
-    if ([cls respondsToSelector:sel]) {
-		#pragma clang diagnostic push
-		#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [cls performSelector:sel withObject:@"http"];
-        [cls performSelector:sel withObject:@"https"];
-		#pragma clang diagnostic pop
-    }
-	BOOL result = %orig;
-	return result;
-}
+// - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+// 	[NSURLProtocol registerClass:NSClassFromString(@"PZHURLProtocol")];
+// 	//注册scheme
+//     Class cls = NSClassFromString(@"WKBrowsingContextController");
+//     SEL sel = NSSelectorFromString(@"registerSchemeForCustomProtocol:");
+//     if ([cls respondsToSelector:sel]) {
+// 		#pragma clang diagnostic push
+// 		#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//         [cls performSelector:sel withObject:@"http"];
+//         [cls performSelector:sel withObject:@"https"];
+// 		#pragma clang diagnostic pop
+//     }
+// 	BOOL result = %orig;
+// 	return result;
+// }
 
 %end
 
