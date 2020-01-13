@@ -18,8 +18,9 @@ NSString *const kPZHURLProtocolKey = @"com.tylinux.purezhihu.request.key";
 
 @implementation PZHURLProtocol
 
-+(BOOL)canInitWithRequest:(NSURLRequest *)request
++ (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
+    NSLog(@"PureZhihu: URL: %@", request.URL.absoluteString);
     if ([NSURLProtocol propertyForKey:kPZHURLProtocolKey inRequest:request]) {
         return NO;
     }
@@ -27,8 +28,9 @@ NSString *const kPZHURLProtocolKey = @"com.tylinux.purezhihu.request.key";
     return YES;
 }
 
-+(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
++ (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
 {
+    NSLog(@"PureZhihu: URL: %@", request.URL.absoluteString);
     NSMutableURLRequest *mutableReqeust = [request mutableCopy];
     [NSURLProtocol setProperty:@YES
                         forKey:kPZHURLProtocolKey
@@ -38,6 +40,7 @@ NSString *const kPZHURLProtocolKey = @"com.tylinux.purezhihu.request.key";
 
 - (void)startLoading
 {
+    NSLog(@"PureZhihu: URL: %@", self.request.URL.absoluteString);
     NSString *regex = @"https://api.zhihu.com/appview/api/v4/answers/.*/recommendations";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     if ([predicate evaluateWithObject:self.request.URL.absoluteString]) {

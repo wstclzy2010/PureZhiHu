@@ -1,4 +1,5 @@
 #import "PZHURLProtocol.h"
+#import "ZHObject.h"
 
 // 去掉『市场』tab
 // %hook  ZHInitialTabBarController
@@ -40,23 +41,16 @@
 
 %end
 
-// 去掉 FEED 流广告
-%hook ZHFeedADWrap
+// 去掉盐选专栏，盐选推荐，为你推荐等等乱七八糟的玩意儿
+%hook ZHNewFeedListViewController
 
-- (id)initWithProperties:(id)arg1
++ (id)componentForModel:(ZHObject *)model context:(id)context
 {
+	NSDictionary *properties = model.properties;
+	if ([properties[@"type"] isEqualToString:@"common_card"]) {
+		return %orig;
+	}
 	return nil;
-}
-
-%end
-
-// 去掉盐选专栏
-%hook ZHFeedLiveCourse
-
-- (void)setTitle:(id)title
-{
-	NSLog(@"PureZhihu: title: %@", title);
-	%orig;
 }
 
 %end
@@ -64,21 +58,22 @@
 // 去掉答案后边的广告
 %hook ZHAppDelegate
 
-// - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-// 	[NSURLProtocol registerClass:NSClassFromString(@"PZHURLProtocol")];
-// 	//注册scheme
-//     Class cls = NSClassFromString(@"WKBrowsingContextController");
-//     SEL sel = NSSelectorFromString(@"registerSchemeForCustomProtocol:");
-//     if ([cls respondsToSelector:sel]) {
-// 		#pragma clang diagnostic push
-// 		#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-//         [cls performSelector:sel withObject:@"http"];
-//         [cls performSelector:sel withObject:@"https"];
-// 		#pragma clang diagnostic pop
-//     }
-// 	BOOL result = %orig;
-// 	return result;
-// }
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+	[NSURLProtocol registerClass:NSClassFromString(@"PZHURLProtocol")];
+	//注册scheme
+    Class cls = NSClassFromString(@"WKBrowsingContextController");
+    SEL sel = NSSelectorFromString(@"registerSchemeForCustomProtocol:");
+    if ([cls respondsToSelector:sel]) {
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [cls performSelector:sel withObject:@"http"];
+        [cls performSelector:sel withObject:@"https"];
+		#pragma clang diagnostic pop
+    }
+	BOOL result = %orig;
+	return result;
+}
 
 %end
 
